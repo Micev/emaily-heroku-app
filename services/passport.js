@@ -22,17 +22,16 @@ passport.use(
     {
       clientID: keys.googleClientID,
       clientSecret: keys.googleClientSecret,
-      callbackURL: '/auth/google/callback'
-    }, (accessToken, refreshToken, profile, done) => {
-      console.log('profileId: ' + profile.id)
+      callbackURL: '/auth/google/callback',
+      proxy: true
+    },
+    (accessToken, refreshToken, profile, done) => {
       User.findOne({googleId: profile.id}).then(existingUser => {
         if (existingUser) {
           // return data for that user
           // first argument is error
-          console.log('get existing user: ' + existingUser.id)
           done(null, existingUser);
         } else {
-          console.log('Create user ')
           new User({googleId: profile.id})
           .save()
           .then(user => done(null, user))
